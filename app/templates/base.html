@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Chariots</title>
+    </head>
+    <body>
+      <div>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('order') }}">Orders</a>
+        <a href="{{ url_for('vehicle') }}">Vehicles</a>
+        <a href="{{ url_for('compute') }}">Compute</a>
+      </div>
+      <hr>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </body>
+</html>

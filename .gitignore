@@ -1,0 +1,9 @@
+# IDEs
+.vscode
+
+# Python artifacts
+__pycache__
+*.pyc
+
+# Local dev files
+*.db
