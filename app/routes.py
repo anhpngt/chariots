@@ -1,8 +1,14 @@
 from flask import Flask
+from flask import redirect
 from flask import render_template
+from flask import request
+from flask import url_for, flash
 
+from app.database import db
 from app.database.models import Order
 from app.database.models import Vehicle
+from app.forms import OrderForm
+from app.forms import VehicleForm
 
 
 def setup_routes(app: Flask):
@@ -18,11 +24,15 @@ def setup_routes(app: Flask):
 
     @app.route('/delete_order', methods=['POST'])
     def delete_order():
-        return ''
+        Order.query.filter_by(id=request.form.get('delete_order')).delete()
+        db.session.commit()
+        return redirect(url_for('index'))
 
     @app.route('/delete_vehicle', methods=['POST'])
     def delete_vehicle():
-        pass
+        Vehicle.query.filter_by(id=request.form.get('delete_vehicle')).delete()
+        db.session.commit()
+        return redirect(url_for('index'))
 
     @app.route('/compute', methods=['GET', 'POST'])
     def compute():
@@ -34,8 +44,28 @@ def setup_routes(app: Flask):
 
     @app.route('/order', methods=['GET', 'POST'])
     def order():
-        pass
+        form = OrderForm()
+        if form.validate_on_submit():
+
+            flash('Order added')
+            return redirect(url_for('index'))
+
+        return render_template('order.html',
+                               title='Orders',
+                               form=form)
 
     @app.route('/vehicle', methods=['GET', 'POST'])
     def vehicle():
-        pass
+        form = VehicleForm()
+        if form.validate_on_submit():
+            vehicle = Vehicle(vehiclename=form.vehiclename.data,
+                              capacity=form.capacity.data)
+            db.session.add(vehicle)
+            db.session.commit()
+
+            flash("Vehicle added")
+            return redirect(url_for('index'))
+
+        return render_template('vehicle.html',
+                               title='Vehicles',
+                               form=form)
