@@ -21,6 +21,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(140))
     latlon = db.Column(db.String(140))
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
     load = db.Column(db.Float)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 

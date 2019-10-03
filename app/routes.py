@@ -1,8 +1,9 @@
 from flask import Flask
+from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
-from flask import url_for, flash
+from flask import url_for
 
 from app.database import db
 from app.database.models import Order
@@ -46,6 +47,13 @@ def setup_routes(app: Flask):
     def order():
         form = OrderForm()
         if form.validate_on_submit():
+            new_order = Order(address=form.address.data,
+                              latlon=','.join([form.lat.data, form.lng.data]),
+                              lat=float(form.lat.data),
+                              lng=float(form.lng.data),
+                              load=form.load.data)
+            db.session.add(new_order)
+            db.session.commit()
 
             flash('Order added')
             return redirect(url_for('index'))

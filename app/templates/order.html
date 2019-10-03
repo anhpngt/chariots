@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+    var map, autocomplete;
+
+    function initAutocomplete() {
+        // Create the autocomplete object, restricting the search predictions to
+        // geographical location types.
+        addressField = document.getElementById('address');
+        autocomplete = new google.maps.places.Autocomplete(addressField, { types: [] });
+
+        // Add a event callback to relay the lat/lng information
+        // to the hidden fields in the forms
+        latField = document.getElementById('lat');
+        lngField = document.getElementById('lng');
+        autocomplete.setFields(['geometry']);
+
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                latField.value = null;
+                lngField.value = null;
+            } else {
+                latField.value = place.geometry.location.lat();
+                lngField.value = place.geometry.location.lng();
+            }
+        })
+
+    }
+
+    // Bias the autocomplete object to the user's geographical location,
+    // as supplied by the browser's 'navigator.geolocation' object.
+    function geolocate() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var geolocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                var circle = new google.maps.Circle(
+                    { center: geolocation, radius: position.coords.accuracy });
+                autocomplete.setBounds(circle.getBounds());
+            });
+        }
+    }
+</script>
+
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmkjJjDKqjaeq9FW8Se4ZM9Z2x9hyHOYM&language=id&libraries=places&callback=initAutocomplete"
+    async defer>
+</script>
+
+
+<h1>Add Order</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.address.label }}<br>
+        {{ form.address(size=32, placeholder="Enter your address", onFocus="geolocate()") }}<br>
+    </p>
+    <p>
+        {{ form.load.label }}<br>
+        {{ form.load(size=32) }}<br>
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+
+
+
+{% endblock %}
