@@ -9,7 +9,7 @@
     <li>{{ order.address.encode("utf-8"), order.load }}</li>
     <form action="{{ url_for('delete_order')}}" method=post>
         <input type=hidden value="{{order.id}}" name="delete_order"/>
-        <input type=submit value="delete", style="position:relative; left:80%;"></input>
+        <input type=submit value="delete", style="position:relative; left:80%;"/>
     </form>
     {% endfor %} 
     </ul>
@@ -19,7 +19,7 @@
     <li>{{ vehicle.vehiclename.encode("utf-8"), vehicle.capacity }}</li>
     <form action="{{ url_for('delete_vehicle')}}" method=post>
         <input type=hidden value="{{vehicle.id}}" name="delete_vehicle"/>
-        <input type=submit value="delete", style="position:relative; left:80%;"></input>
+        <input type=submit value="delete", style="position:relative; left:80%;"/>
     </form>
     
     {% endfor %} 
