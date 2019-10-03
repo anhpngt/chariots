@@ -6,7 +6,7 @@
         {{ form.hidden_tag() }}
         <p>
             {{ form.vehiclename.label }}<br>
-            {{ form.vehiclename(size=32) }}<br>
+            {{ form.vehiclename(size=32, maxlength=10) }}<br>
         </p>
         <p>
             {{ form.capacity.label }}<br>
