@@ -1,25 +1,30 @@
-<html>
-    <head>
-        <title>Chariots</title>
-    </head>
-    <body>
-        <div>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('order') }}">Orders</a>
-            <a href="{{ url_for('vehicle') }}">Vehicles</a>
-            <a href="{{ url_for('compute') }}">Compute</a>
-        </div>
-      <hr>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+{% extends 'bootstrap/base.html' %}
 
-        {% block content %}{% endblock %}
-    </body>
-</html>
+{% block navbar %}
+    <link rel="stylesheet" href="/static/template.css">
+    <nav class="navbar navbar-default" role="navigation">
+
+      <a class="navbar-brand" href="{{ url_for('index') }}">Chariots</a>
+
+
+      <div class="collapse navbar-collapse" id="basicExampleNav">
+          <ul class="nav navbar-nav">
+              <li><a href="{{ url_for('order') }}"> Add Order </a></li>
+              <li><a href="{{ url_for('vehicle') }}"> Add Vehicle </a></li>
+              <li><a href="{{ url_for('compute') }}"> Solve</a> </li>
+          </ul>
+      </div>
+    </nav>
+{% endblock %}
+
+
+
+{% block app_content %}
+    <div class="container">
+      <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_bootstrap import Bootstrap
 
 from app.database import setup_database
 from app.routes import setup_routes
@@ -27,5 +28,7 @@ def create_app():
 
     # Setup routes
     setup_routes(new_app)
+
+    _ = Bootstrap(new_app)
 
     return new_app
