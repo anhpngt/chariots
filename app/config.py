@@ -13,6 +13,8 @@ class BaseConfig():
 
 
 class ProductionConfig(BaseConfig):
+    LOG_DESTINATION_FILE = '.log'
+
     # Heroku PostgreSQL passes connection URL as env var
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
@@ -20,6 +22,6 @@ class ProductionConfig(BaseConfig):
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
 
-    LOG_FILE = '.log'
+    LOG_DESTINATION_FILE = '.log'
     # SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///chariots.db'  # use sqlite instead of psql
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://echo:1231@localhost/chariots'

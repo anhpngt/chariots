@@ -28,5 +28,13 @@ class Order(db.Model):
 
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'))
 
-    def __repr(self):
+    def __repr__(self):
         return '<Order {}>'.format(self.address)
+
+
+class DistanceMatrix(db.Model):
+    __tablename__ = 'distance_matrix'
+
+    id1 = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False, primary_key=True, autoincrement=False)
+    id2 = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False, primary_key=True, autoincrement=False)
+    distance = db.Column(db.Integer)

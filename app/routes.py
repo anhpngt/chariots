@@ -1,9 +1,10 @@
+from app.cvrp import DataModel, solve_cvrp
 from flask import Flask
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
-from flask import url_for
+from flask import url_for, jsonify
 
 from app.database import db
 from app.database.models import Order
@@ -37,11 +38,24 @@ def setup_routes(app: Flask):
 
     @app.route('/compute', methods=['GET', 'POST'])
     def compute():
-        pass
+        data_model = DataModel()
+        data_model.prepare_model()
+        routes = solve_cvrp(data_model)
+
+        return jsonify(result=routes)
 
     @app.route('/result')
     def result():
-        pass
+        all_orders = Order.query.all()
+        # order_data = [[DEPOT_LAT, DEPOT_LNG]]       # type: list[list[float, float]]
+
+        # for order in all_orders:
+        #     order_data.append([order.lat, order.lng])
+
+        # return render_template('res.html',
+        #                        title='Map',
+        #                        path_data={},
+        #                        orders_data=order_data)
 
     @app.route('/order', methods=['GET', 'POST'])
     def order():
