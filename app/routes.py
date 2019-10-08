@@ -26,14 +26,18 @@ def setup_routes(app: Flask):
 
     @app.route('/delete_order', methods=['POST'])
     def delete_order():
-        Order.query.filter_by(id=request.form.get('delete_order')).delete()
+        order_id = request.form.get('delete_order')
+        Order.query.filter_by(id=order_id).delete()
         db.session.commit()
+        app.logger.info(f'Order (id: {order_id}) is deleted.')
         return redirect(url_for('index'))
 
     @app.route('/delete_vehicle', methods=['POST'])
     def delete_vehicle():
-        Vehicle.query.filter_by(id=request.form.get('delete_vehicle')).delete()
+        vehicle_id = request.form.get('delete_vehicle')
+        Vehicle.query.filter_by(id=vehicle_id).delete()
         db.session.commit()
+        app.logger.info(f'Vehicle (id: {vehicle_id}) is deleted.')
         return redirect(url_for('index'))
 
     @app.route('/compute', methods=['GET', 'POST'])

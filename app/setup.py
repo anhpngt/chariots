@@ -1,22 +1,52 @@
 import os
+from logging.config import dictConfig
 
 from dotenv import load_dotenv
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from logging.handlers import RotatingFileHandler
-import logging
 
 from app.database import setup_database
 from app.routes import setup_routes
 
 load_dotenv()
 
+# Deployment environment, either "production" or "development"
+app_env = os.environ['ENVIRONMENT']
+
+# Configuration for logging module
+dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s-%(name)s] %(levelname)s: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S%z'
+        }
+    },
+    'handlers': {
+        'default': {
+            'class': 'logging.StreamHandler',
+            # 'stream': 'ext://sys.stdout',
+            'formatter': 'default',
+            'level': 'INFO'
+        },
+        'file_handler': {
+            'class': 'logging.FileHandler',
+            'filename': '.log',
+            'formatter': 'default',
+            'level': 'DEBUG'
+        }
+    },
+    'root': {
+        'level': 'INFO',
+        'handlers': ['default'] if app_env == 'production' else ['default', 'file_handler']
+    }
+})
+
 
 def create_app() -> Flask:
     new_app = Flask(__name__)
 
     # Load configuration settings
-    app_env = os.environ['ENVIRONMENT']
     if app_env == 'production':
         new_app.config.from_object('app.config.ProductionConfig')
     elif app_env == 'development':
@@ -33,16 +63,5 @@ def create_app() -> Flask:
 
     _ = Bootstrap(new_app)
 
-    new_app.logger.info('App init successful')
+    new_app.logger.info('Application initialized.')
     return new_app
-
-
-def setup_logging(app: Flask) -> None:
-    formatter = logging.Formatter(fmt='[{levelname}] {asctime} ({module}): {message}', style='{')
-    handler = RotatingFileHandler(app.config['LOG_DESTINATION_FILE'], maxBytes=1073741824, backupCount=5)
-    handler.setFormatter(formatter)
-
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.DEBUG)
-    if app.config['DEBUG']:
-        app.logger.setLevel(logging.DEBUG)

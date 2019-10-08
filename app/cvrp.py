@@ -34,11 +34,20 @@ class DataModel:
             self.addresses.append(Coord(lat=odr.lat, lng=odr.lng))
             self.demands.append(int(odr.load))
 
+        current_app.logger.info(f'Added {len(orders)} orders to data model.')
+
     def add_vehicles(self, vehicles: List[Vehicle]) -> None:
         for veh in vehicles:
             self.vehicle_capacities.append(int(veh.capacity))
 
+        current_app.logger.info(f'Added {len(vehicles)} orders to data model.')
+
     def compute_distance_matrix(self, mode: str) -> None:
+        current_app.logger.debug('Building distance matrix')
+        current_app.logger.debug(f'Addresses lng-lat: {self.addresses}')
+        current_app.logger.debug(f'Demands: {self.demands}')
+        current_app.logger.debug(f'Vehicle capacities: {self.vehicle_capacities}')
+
         N = len(self.addresses)
 
         if mode == 'utm':
