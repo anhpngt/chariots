@@ -5,7 +5,7 @@ from app.types import Coord
 APP_VERSION = '0.1'
 
 # DEPOT = '-0.068372,109.362745'      # type: str
-DEPOT = '1.299740,103.787517'
+DEPOT = '1.299740,103.787517'       # one-north, singapore
 DEPOT_COORD = Coord(*map(float, DEPOT.split(',')))
 
 

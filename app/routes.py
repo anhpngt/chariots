@@ -1,19 +1,29 @@
-from app.cvrp import DataModel, solve_cvrp
+from app.cvrp import DataModel
 from flask import Flask
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
-from flask import url_for, jsonify
+from flask import url_for
+from app.constants import DEPOT
 
 from app.database import db
-from app.database.models import Order
+from app.database.models import Order, DistanceMatrix
 from app.database.models import Vehicle
 from app.forms import OrderForm
 from app.forms import VehicleForm
 
+data_model = DataModel()
+
 
 def setup_routes(app: Flask):
+    @app.route('/test')
+    def test():
+        print(DistanceMatrix.query.order_by(DistanceMatrix.id2, DistanceMatrix.id1).all())
+        return dict(
+            # result=[dm for dm in DistanceMatrix.query.order_by(DistanceMatrix.id1, DistanceMatrix.id2).all()]
+        )
+
     @app.route('/')
     @app.route('/index')
     def index():
@@ -42,24 +52,37 @@ def setup_routes(app: Flask):
 
     @app.route('/compute', methods=['GET', 'POST'])
     def compute():
-        data_model = DataModel()
-        data_model.prepare_model()
-        routes = solve_cvrp(data_model)
+        data_model.prepare_model(distance_mode='real')
+        routes = data_model.solve()
 
-        return jsonify(result=routes)
+        if not data_model.is_solved:
+            app.logger.error('Failed to solve problem')
+            flash('Failed to compute routes for vehicles.')
+            return redirect(url_for('index'))
+
+        allpaths = [rt.path for rt in routes]
+        return render_template('compute.html', title='Compute', paths=allpaths)
 
     @app.route('/result')
     def result():
+        if not data_model.is_solved:
+            app.logger.warn('Problem is not solved')
+            flash('Problem is not yet solved')
+            return redirect(url_for('index'))
+
         all_orders = Order.query.all()
-        # order_data = [[DEPOT_LAT, DEPOT_LNG]]       # type: list[list[float, float]]
+        order_data = [DEPOT.split(',')]
 
-        # for order in all_orders:
-        #     order_data.append([order.lat, order.lng])
+        for order in all_orders:
+            order_data.append([order.lat, order.lng])
 
-        # return render_template('res.html',
-        #                        title='Map',
-        #                        path_data={},
-        #                        orders_data=order_data)
+        allpathdata = [rt.path_data for rt in data_model.result_routes]
+
+        import json
+        return render_template('res.html',
+                               title='Map',
+                               path_data=json.dumps(allpathdata),
+                               orders_data=json.dumps(order_data))
 
     @app.route('/order', methods=['GET', 'POST'])
     def order():

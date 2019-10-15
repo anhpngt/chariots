@@ -11,7 +11,7 @@ from app.routes import setup_routes
 load_dotenv()
 
 # Deployment environment, either "production" or "development"
-app_env = os.environ['ENVIRONMENT']
+app_env = os.environ['FLASK_ENV']
 
 # Configuration for logging module
 dictConfig({

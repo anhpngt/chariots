@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <div><b>Paths</b></div>
+    <ul> 
+      {% for path in paths %}
+        <li>{{ path }}</li>
+      {% endfor %} 
+    </ul>
+
+    <body>
+      <iframe width="2000" height="1000" src="{{ url_for('result') }}">
+        <p>Your browser does not support iframes.</p>
+      </iframe>
+    </body>
+
+
+{% endblock %}
