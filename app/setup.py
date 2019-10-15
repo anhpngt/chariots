@@ -27,7 +27,7 @@ dictConfig({
             'class': 'logging.StreamHandler',
             # 'stream': 'ext://sys.stdout',
             'formatter': 'default',
-            'level': 'INFO'
+            'level': 'DEBUG' if app_env == 'production' else 'INFO'
         },
         'file_handler': {
             'class': 'logging.FileHandler',
@@ -37,7 +37,7 @@ dictConfig({
         }
     },
     'root': {
-        'level': 'INFO',
+        'level': 'DEBUG',
         'handlers': ['default'] if app_env == 'production' else ['default', 'file_handler']
     }
 })
